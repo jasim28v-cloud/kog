@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="SHΔDØW GENESIS - منصة فيديوهات الجيل القادم">
+    <meta name="keywords" content="فيديوهات, شادو, SHADOW, GENESIS, مقاطع قصيرة">
+    <title>SHΔDØW | GENESIS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Cairo:wght@400;700&display=swap');
+        
+        :root { --neon-color: #00f3ff; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; overflow: hidden; font-family: 'Cairo', sans-serif; }
+        
+        .scroll-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; transition: 0.5s; }
+        .scroll-engine::-webkit-scrollbar { display: none; }
+        
+        .video-segment { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .glass-ui { background: rgba(0,0,0,0.4); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        .neon-border { border-color: var(--neon-color) !important; box-shadow: 0 0 10px var(--neon-color); }
+        .neon-text { color: var(--neon-color) !important; text-shadow: 0 0 5px var(--neon-color); }
+
+        .xp-bar-container { position: fixed; top: 70px; left: 20px; width: 120px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; z-index: 150; }
+        #xp-progress { height: 100%; width: 0%; background: var(--neon-color); border-radius: 10px; transition: 1s; }
+
+        .side-controls { position: absolute; left: 15px; bottom: 110px; display: flex; flex-direction: column; gap: 15px; z-index: 50; }
+        .glass-btn { width: 50px; height: 50px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; }
+        
+        .shuffle-btn { position: fixed; top: 80px; right: 20px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 100; border: 1px solid rgba(0,243,243,0.3); }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+        .loading-text { animation: pulse 1s infinite alternate; }
+    </style>
+</head>
+<body>
+
+    <header class="fixed top-0 w-full z-[200] glass-ui p-4 flex justify-between items-center border-b">
+        <div class="flex flex-col">
+            <span id="user-level" class="text-[9px] font-[Orbitron] neon-text">LEVEL 1 [INITIATE]</span>
+            <div class="xp-bar-container"><div id="xp-progress"></div></div>
+        </div>
+        <h1 class="text-xl font-black italic font-[Orbitron] tracking-tighter">SHΔDØW</h1>
+        <i class="fas fa-radar text-sm neon-text"></i>
+    </header>
+
+    <div class="shuffle-btn glass-ui" onclick="shuffleProtocol()">
+        <i class="fas fa-random text-xs neon-text"></i>
+    </div>
+
+    <main class="scroll-engine" id="video-stack">
+        <div class="h-full flex flex-col items-center justify-center">
+            <i class="fas fa-ghost fa-spin text-3xl neon-text mb-4"></i>
+            <span class="loading-text text-[10px] font-[Orbitron]">BOOTING_SHADOW_CORE...</span>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] h-16 glass-ui rounded-2xl flex justify-around items-center z-[200]">
+        <i class="fas fa-th-large neon-text"></i>
+        <i class="fas fa-comment-dots opacity-40" onclick="toggleChat()"></i>
+        <div id="upload-trigger" class="w-12 h-12 bg-white text-black rounded-xl flex items-center justify-center shadow-lg"><i class="fas fa-plus"></i></div>
+        <i class="fas fa-share-alt opacity-40" onclick="shareVideo()"></i>
+        <i class="fas fa-user-secret opacity-40" onclick="openAd()"></i>
+    </nav>
+
+    <div id="chat-overlay" class="fixed inset-0 z-[300] hidden flex-col glass-ui" style="background: rgba(0,0,0,0.9);">
+        <div class="p-4 flex justify-between border-b border-white/10">
+            <span class="neon-text font-[Orbitron]">SECURE_CHAT</span>
+            <i class="fas fa-times cursor-pointer p-2" onclick="toggleChat()"></i>
+        </div>
+        <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-3"></div>
+        <div class="p-4 flex gap-2 border-t border-white/10">
+            <input type="text" id="msg-input" class="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 outline-none" placeholder="Type..." onkeypress="handleKey(event)">
+            <button onclick="sendChat()" class="neon-text p-2"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const SHADOW_ID = localStorage.getItem('shadow_uid') || 'GHOST_' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        localStorage.setItem('shadow_uid', SHADOW_ID);
+        let userXP = parseInt(localStorage.getItem('shadow_xp')) || 0;
+
+        const firebaseConfig = { databaseURL: "https://project-717e4-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const AD_LINKS = [
+            "https://www.effectivegatecpm.com/k60w64w4gk?key=564f3d8cc4ac85949f218179b742495e",
+            "https://www.effectivegatecpm.com/bxwxuk2f39?key=566216691dc8b76a740840e94f68f44c"
+        ];
+        let currentAd = 0;
+
+        function openAd() {
+            window.open(AD_LINKS[currentAd], '_blank');
+            currentAd = (currentAd + 1) % AD_LINKS.length;
+            addXP(5);
+        }
+
+        function addXP(amount) {
+            userXP += amount;
+            localStorage.setItem('shadow_xp', userXP);
+            updateXPUI();
+        }
+
+        function updateXPUI() {
+            const level = Math.floor(userXP / 100) + 1;
+            const progress = userXP % 100;
+            const titles = ["INITIATE", "OPERATIVE", "AGENT", "PHANTOM", "SHADOW_LORD"];
+            const levelEl = document.getElementById('user-level');
+            const xpEl = document.getElementById('xp-progress');
+            if(levelEl) levelEl.innerText = `LEVEL ${level} [${titles[Math.min(level-1, 4)]}]`;
+            if(xpEl) xpEl.style.width = progress + "%";
+        }
+        updateXPUI();
+
+        db.ref('videos').on('value', (snapshot) => {
+            const container = document.getElementById('video-stack');
+            const data = snapshot.val();
+            if(!data) return;
+            
+            const sorted = Object.keys(data).map(id => ({ id, ...data[id] })).reverse();
+            container.innerHTML = '';
+            
+            sorted.forEach((vid) => {
+                const section = document.createElement('section');
+                section.className = 'video-segment';
+                section.innerHTML = `
+                    <video loop playsinline src="${vid.url}"></video>
+                    <div class="side-controls">
+                        <div class="glass-btn glass-ui ${vid.likedBy && vid.likedBy[SHADOW_ID] ? 'neon-border neon-text' : ''}" onclick="toggleLike('${vid.id}')">
+                            <i class="fas fa-heart"></i>
+                            <span class="text-[10px] font-bold">${vid.likes || 0}</span>
+                        </div>
+                        <div class="glass-btn glass-ui" onclick="toggleChat()">
+                            <i class="fas fa-comment"></i>
+                            <span class="text-[9px]">TALK</span>
+                        </div>
+                        <div class="glass-btn glass-ui" onclick="shareVideo()">
+                            <i class="fas fa-share"></i>
+                            <span class="text-[9px]">SEND</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+            initScroll();
+        });
+
+        function shuffleProtocol() {
+            openAd();
+            const sections = document.querySelectorAll('.video-segment');
+            if(sections.length > 0) {
+                const randomIdx = Math.floor(Math.random() * sections.length);
+                sections[randomIdx].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleLike(vId) {
+            openAd();
+            addXP(2);
+            db.ref(`videos/${vId}`).transaction(p => {
+                if (p) {
+                    if (!p.likedBy) p.likedBy = {};
+                    if (p.likedBy[SHADOW_ID]) { p.likes--; delete p.likedBy[SHADOW_ID]; }
+                    else { p.likes++; p.likedBy[SHADOW_ID] = true; }
+                }
+                return p;
+            });
+        }
+
+        const CLOUD_NAME = "dssk5tabb", UPLOAD_PRESET = "bjebvo5p";
+        const myWidget = cloudinary.createUploadWidget({ cloudName: CLOUD_NAME, uploadPreset: UPLOAD_PRESET, sources: ['local'] }, (err, res) => {
+            if (!err && res.event === "success") {
+                db.ref('videos/').push({ url: res.info.secure_url, sender: SHADOW_ID, likes: 0, timestamp: Date.now() });
+                addXP(50);
+            }
+        });
+        document.getElementById("upload-trigger").onclick = () => { openAd(); myWidget.open(); };
+
+        function shareVideo() { openAd(); addXP(5); navigator.share({ title: 'Shadow Genesis', url: window.location.href }); }
+        function toggleChat() { const c = document.getElementById('chat-overlay'); c.style.display = c.style.display === 'flex' ? 'none' : 'flex'; if(c.style.display === 'flex') openAd(); }
+        function sendChat() { const i = document.getElementById('msg-input'); if(i.value.trim()){ db.ref('global_chat').push({user:SHADOW_ID, text:i.value}); i.value=''; addXP(1); } }
+        function handleKey(e) { if(e.key==='Enter') sendChat(); }
+        
+        db.ref('global_chat').limitToLast(10).on('value', s => {
+            const b = document.getElementById('chat-box'); b.innerHTML = '';
+            const v = s.val(); if(v) Object.values(v).forEach(m => {
+                const d = document.createElement('div'); d.className='p-3 bg-white/5 rounded-xl border border-white/10';
+                d.innerHTML = `<span class="text-[9px] neon-text block">${m.user}</span><p class="text-sm">${m.text}</p>`;
+                b.appendChild(d);
+            });
+            b.scrollTop = b.scrollHeight;
+        });
+
+        function initScroll() {
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    const v = e.target.querySelector('video');
+                    if(e.isIntersecting) {
+                        if(v) v.play().catch(()=>{});
+                        const colors = ['#00f3ff', '#ff00ff', '#00ffaa', '#ffff00'];
+                        document.documentElement.style.setProperty('--neon-color', colors[Math.floor(Math.random()*colors.length)]);
+                    } else { if(v) { v.pause(); v.currentTime = 0; } }
+                });
+            }, { threshold: 0.6 });
+            document.querySelectorAll('.video-segment').forEach(s => obs.observe(s));
+        }
+        document.addEventListener('click', () => { document.querySelectorAll('video').forEach(v => v.muted = false); }, { once: true });
+    </script>
+</body>
+</html>
