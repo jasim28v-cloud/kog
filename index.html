@@ -3,209 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VORTEX | OBSIDIAN PRISM V3</title>
+    <title>VORTEX | GLASS PRISM 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Orbitron:wght@400;900&family=Cairo:wght@300;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Orbitron:wght@500;900&family=Cairo:wght@300;700&display=swap');
         
         :root { --ion: #00fff2; --shadow: rgba(0, 255, 242, 0.4); }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; overflow: hidden; font-family: 'Cairo', sans-serif; }
         
+        /* محرك العرض */
         .vortex-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
         .vortex-engine::-webkit-scrollbar { display: none; }
         .unit { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* العلامة المائية المضيئة */
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-family: 'Syncopate'; font-size: 3.5rem; font-weight: 900; opacity: 0.12; pointer-events: none; z-index: 50; color: #fff; white-space: nowrap; text-shadow: 0 0 15px var(--ion); }
+        /* العلامة المائية الفاخرة */
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-family: 'Syncopate'; font-size: 3.5rem; font-weight: 900; opacity: 0.15; pointer-events: none; z-index: 50; color: #fff; white-space: nowrap; text-shadow: 0 0 15px var(--ion); }
 
-        /* الهيدر المطور بنظام الـ XP */
-        .header-glass { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(0,0,0,0.4); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .xp-track { width: 100px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 5px; }
-        #xp-progress { width: 0%; height: 100%; background: var(--ion); box-shadow: 0 0 10px var(--ion); transition: 1s; }
-
-        /* أزرار جانبية زجاجية */
-        .left-prism-hub { position: absolute; left: 18px; bottom: 150px; display: flex; flex-direction: column; gap: 25px; z-index: 100; }
-        .prism-btn { width: 55px; height: 55px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; position: relative; }
-        .prism-btn:active { transform: scale(0.85); }
-        .btn-label { position: absolute; bottom: -18px; font-size: 9px; font-weight: bold; color: var(--ion); font-family: 'Orbitron'; }
-
-        /* الناف بار السفلي */
-        .bottom-trinity { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; height: 80px; background: rgba(0,0,0,0.8); backdrop-filter: blur(35px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .obsidian-upload { width: 68px; height: 68px; background: #fff; color: #000; border-radius: 22px; display: flex; align-items: center; justify-content: center; transform: translateY(-15px); box-shadow: 0 10px 30px var(--shadow); cursor: pointer; transition: 0.3s; }
-        .obsidian-upload:active { transform: translateY(-10px) scale(0.9); }
-
-        /* الدردشة */
-        .chat-glass { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(40px); z-index: 2000; display: none; flex-direction: column; }
+        /* الهيدر الزجاجي */
+        .header-glass { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .neon-title { font-family: 'Syncopate', sans-serif; background: linear-gradient(90deg, #fff, var(--ion)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* زر العشوائية */
-        .shuffle-btn { position: fixed; top: 85px; right: 20px; width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 900; border: 1px solid var(--ion); }
+        /* نظام الـ XP الزجاجي */
+        .xp-bar-glass { width: 80px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 4px; }
+        #xp-fill { width: 40%; height: 100%; background: var(--ion); box-shadow: 0 0 10px var(--ion); transition: 1s; }
+
+        /* التحكم الأيسر الزجاجي */
+        .left-prism-hub { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 100; }
+        .prism-btn { width: 55px; height: 55px; border-radius: 18px; background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
+        .prism-btn i { font-size: 20px; color: rgba(255,255,255,0.6); }
+        .prism-btn.active i { color: var(--ion); filter: drop-shadow(0 0 8px var(--ion)); }
+
+        /* الناف بار السفلي الزجاجي */
+        .bottom-trinity { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; height: 75px; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .obsidian-upload { width: 65px; height: 65px; background: #fff; color: #000; border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: translateY(-15px); box-shadow: 0 10px 30px rgba(0, 255, 242, 0.4); cursor: pointer; border: 4px solid rgba(0,0,0,0.1); }
+
+        /* نافذة الدردشة الزجاجية */
+        .glass-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(40px); z-index: 2000; display: none; flex-direction: column; }
+        #admin-panel { overflow-y: auto; padding: 25px; }
     </style>
 </head>
 <body>
 
     <header class="header-glass">
         <div class="flex flex-col">
-            <h1 class="text-lg font-bold neon-title font-[Syncopate]" style="color:var(--ion)">VORTEX</h1>
-            <div class="xp-track"><div id="xp-progress"></div></div>
-            <span id="rank-name" class="text-[8px] font-bold opacity-70 mt-1 uppercase tracking-widest">RANK: INITIATE</span>
+            <h1 class="text-lg font-bold neon-title">VORTEX</h1>
+            <div class="xp-bar-glass"><div id="xp-fill"></div></div>
         </div>
-        <div id="clock" class="text-[10px] font-[Orbitron] opacity-60">00:00:00</div>
+        <div class="flex items-center gap-3">
+            <div id="clock" class="text-[10px] font-[Orbitron] opacity-60">00:00</div>
+            <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+        </div>
     </header>
 
-    <div class="shuffle-btn" onclick="shuffleFeed()">
-        <i class="fas fa-random text-cyan-400 text-xs"></i>
-    </div>
-
-    <main class="vortex-engine" id="stream"></main>
-
-    <nav class="bottom-trinity">
-        <div class="flex flex-col items-center opacity-40 hover:opacity-100 cursor-pointer" onclick="openAdmin()">
-            <i class="fas fa-terminal text-xl"></i>
-            <span class="text-[9px] font-black mt-1 uppercase">Admin</span>
+    <main class="vortex-engine" id="stream">
+        <div class="h-full flex items-center justify-center opacity-30">
+            <i class="fas fa-circle-notch fa-spin text-2xl"></i>
         </div>
-        <div class="obsidian-upload" id="upload-btn"><i class="fas fa-plus text-2xl"></i></div>
-        <div class="flex flex-col items-center opacity-40 hover:opacity-100 cursor-pointer" onclick="toggleChat()">
-            <i class="fas fa-comments text-xl"></i>
-            <span class="text-[9px] font-black mt-1 uppercase">Chat</span>
-        </div>
-    </nav>
+    </main>
 
-    <div id="chat-window" class="chat-glass">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center">
-            <span class="font-[Orbitron] text-cyan-400 text-sm tracking-[5px]">ENCRYPTED_CHAT</span>
+    <div id="chat-window" class="glass-panel">
+        <div class="p-5 border-b border-white/10 flex justify-between items-center">
+            <span class="font-[Orbitron] text-cyan-400 tracking-widest text-sm">PRISM_CHAT</span>
             <i class="fas fa-times text-xl" onclick="toggleChat()"></i>
         </div>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-        <div class="p-6 bg-white/5 flex gap-3">
-            <input id="chat-input" type="text" placeholder="اكتب رسالة مشفرة..." class="flex-1 bg-transparent border-none outline-none text-sm">
-            <i class="fas fa-paper-plane text-cyan-400 text-xl" onclick="sendMsg()"></i>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+        <div class="p-5 bg-white/5 flex gap-3">
+            <input id="chat-input" type="text" placeholder="أرسل رسالة..." class="flex-1 bg-transparent border-none outline-none text-sm">
+            <i class="fas fa-paper-plane text-cyan-400" onclick="sendMsg()"></i>
         </div>
     </div>
 
-    <div id="admin-panel" class="chat-glass">
-        <div class="p-8 flex justify-between items-center border-b border-white/10">
-            <h2 class="text-xl font-bold font-[Orbitron]">SYSTEM_CONTROL</h2>
+    <div id="admin-panel" class="glass-panel">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="font-bold text-xl neon-title">MANAGER</h2>
             <i class="fas fa-xmark text-2xl" onclick="closeAdmin()"></i>
         </div>
-        <div id="admin-grid" class="grid grid-cols-2 gap-4 p-8 overflow-y-auto"></div>
+        <div id="admin-grid" class="grid grid-cols-2 gap-4"></div>
     </div>
+
+    <nav class="bottom-trinity">
+        <div class="flex flex-col items-center opacity-50 hover:opacity-100 transition-all cursor-pointer" onclick="openAdmin()">
+            <i class="fas fa-shield-halved text-xl"></i>
+            <span class="text-[9px] mt-1 font-bold">ADMIN</span>
+        </div>
+        <div class="obsidian-upload" id="upload-btn">
+            <i class="fas fa-plus text-xl"></i>
+        </div>
+        <div class="flex flex-col items-center opacity-50 hover:opacity-100 transition-all cursor-pointer" onclick="toggleChat()">
+            <i class="fas fa-comment-dots text-xl"></i>
+            <span class="text-[9px] mt-1 font-bold">CHAT</span>
+        </div>
+    </nav>
 
     <script>
         const CORE_ID = localStorage.getItem('v_obs_id') || 'GHOST_' + Math.random().toString(36).substr(2, 4).toUpperCase();
         localStorage.setItem('v_obs_id', CORE_ID);
-        let userXP = parseInt(localStorage.getItem('v_xp')) || 0;
 
         const firebaseConfig = { databaseURL: "https://project-717e4-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 1. XP System
-        function addXP(amount) {
-            userXP += amount;
-            localStorage.setItem('v_xp', userXP);
-            updateXPUI();
-        }
-        function updateXPUI() {
-            const level = Math.floor(userXP / 100) + 1;
-            const progress = userXP % 100;
-            const ranks = ["INITIATE", "OPERATIVE", "ELITE", "PHANTOM", "GOD_MODE"];
-            document.getElementById('xp-progress').style.width = progress + '%';
-            document.getElementById('rank-name').innerText = `LEVEL ${level} | ${ranks[Math.min(level-1, 4)]}`;
-        }
-        updateXPUI();
+        // Clock
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}); }, 1000);
 
-        // 2. Clock
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
+        // Admin System
+        function openAdmin() { if(prompt("ACCESS_CODE:") === "1234") { document.getElementById('admin-panel').style.display = 'flex'; loadAdmin(); } }
+        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+        function loadAdmin() {
+            db.ref('videos').once('value', s => {
+                const g = document.getElementById('admin-grid'); g.innerHTML = '';
+                const v = s.val(); if(v) Object.keys(v).forEach(id => {
+                    const el = document.createElement('div'); el.className = 'relative aspect-[9/16] rounded-xl overflow-hidden border border-white/10';
+                    el.innerHTML = `<video src="${v[id].url}" class="w-full h-full object-cover"></video>
+                                    <div class="absolute inset-0 bg-red-600/50 flex items-center justify-center" onclick="deleteEntry('${id}')"><i class="fas fa-trash"></i></div>`;
+                    g.appendChild(el);
+                });
+            });
+        }
+        function deleteEntry(id) { if(confirm('Delete Video?')) { db.ref(`videos/${id}`).remove(); loadAdmin(); } }
 
-        // 3. Upload (Direct to Local)
+        // Chat System
+        function toggleChat() { 
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        }
+        function sendMsg() {
+            const inp = document.getElementById('chat-input');
+            if(inp.value.trim()) { db.ref('chat').push({ user: CORE_ID, text: inp.value }); inp.value = ''; }
+        }
+        db.ref('chat').limitToLast(20).on('value', s => {
+            const box = document.getElementById('chat-messages'); box.innerHTML = '';
+            const v = s.val(); if(v) Object.values(v).forEach(m => {
+                box.innerHTML += `<div class="p-3 bg-white/5 rounded-xl border border-white/10 text-xs"><b class="text-cyan-400 block mb-1">${m.user}</b>${m.text}</div>`;
+            });
+            box.scrollTop = box.scrollHeight;
+        });
+
+        // تحسين الرفع المباشر على الاستوديو
         const widget = cloudinary.createUploadWidget({ 
             cloudName: "dssk5tabb", 
             uploadPreset: "bjebvo5p",
-            sources: ['local'], 
-            clientAllowedFormats: ["video"] 
+            sources: ['local'], // يفتح الاستوديو (الملفات المحلية) مباشرة
+            multiple: false,
+            clientAllowedFormats: ["video"],
+            maxFileSize: 100000000,
+            styles: {
+                palette: { window: "#000", sourceBg: "#000", windowBorder: "#00fff2", tabIcon: "#00fff2", inactiveTabIcon: "#555", menuIcons: "#00fff2", link: "#00fff2", action: "#00fff2", inProgress: "#00fff2", complete: "#33ff00", error: "#ff0000", textDark: "#000", textLight: "#fff" }
+            }
         }, (err, res) => {
             if (!err && res.event === "success") {
                 db.ref('videos/').push({ url: res.info.secure_url, sender: CORE_ID, likes: 0, timestamp: Date.now() });
-                addXP(50);
             }
         });
         document.getElementById("upload-btn").onclick = () => widget.open();
 
-        // 4. Feed Engine
+        // Feed Engine
         db.ref('videos').on('value', (snapshot) => {
             const stream = document.getElementById('stream');
             const data = snapshot.val(); if(!data) return;
-            const items = Object.keys(data).map(id => ({id, ...data[id]})).reverse();
-            renderFeed(items);
-        });
-
-        function renderFeed(items) {
-            const stream = document.getElementById('stream');
             stream.innerHTML = '';
-            items.forEach(v => {
+            Object.keys(data).reverse().forEach(id => {
+                const v = data[id];
                 const sec = document.createElement('section');
                 sec.className = 'unit';
                 sec.innerHTML = `
                     <div class="watermark">VORTEX ELITE</div>
                     <video loop playsinline src="${v.url}"></video>
                     <div class="left-prism-hub">
-                        <div class="prism-btn" onclick="toggleMute(this)"><i class="fas fa-volume-high"></i><span class="btn-label">SOUND</span></div>
-                        <div class="prism-btn" onclick="handleLike('${v.id}')"><i class="fas fa-heart"></i><span class="btn-label">${v.likes || 0}</span></div>
-                        <div class="prism-btn" onclick="navigator.share({url:window.location.href})"><i class="fas fa-share-nodes"></i><span class="btn-label">SHARE</span></div>
+                        <div class="prism-btn" onclick="toggleMute(this)"><i class="fas fa-volume-high"></i></div>
+                        <div class="prism-btn" onclick="handleLike('${id}')"><i class="fas fa-heart"></i></div>
+                        <div class="prism-btn" onclick="navigator.share({url:window.location.href})"><i class="fas fa-share-nodes"></i></div>
                     </div>`;
                 stream.appendChild(sec);
             });
             initScroll();
-        }
-
-        function shuffleFeed() {
-            db.ref('videos').once('value', s => {
-                const v = s.val(); if(!v) return;
-                const items = Object.keys(v).map(id => ({id, ...v[id]})).sort(() => Math.random() - 0.5);
-                renderFeed(items);
-                addXP(5);
-            });
-        }
-
-        function handleLike(id) {
-            db.ref(`videos/${id}/likes`).transaction(l => (l || 0) + 1);
-            addXP(2);
-        }
-
-        // 5. Chat
-        function toggleChat() { 
-            const w = document.getElementById('chat-window');
-            w.style.display = w.style.display === 'flex' ? 'none' : 'flex';
-        }
-        function sendMsg() {
-            const i = document.getElementById('chat-input');
-            if(i.value) { db.ref('chat').push({ user: CORE_ID, text: i.value }); i.value = ''; addXP(1); }
-        }
-        db.ref('chat').limitToLast(15).on('value', s => {
-            const b = document.getElementById('chat-messages'); b.innerHTML = '';
-            const v = s.val(); if(v) Object.values(v).forEach(m => {
-                b.innerHTML += `<div class="p-3 bg-white/5 rounded-2xl border border-white/10 text-xs"><b class="text-cyan-400 block mb-1">${m.user}</b>${m.text}</div>`;
-            });
-            b.scrollTop = b.scrollHeight;
         });
-
-        // 6. Admin
-        function openAdmin() { if(prompt("MASTER_KEY:") === "1234") { document.getElementById('admin-panel').style.display = 'flex'; loadAdmin(); } }
-        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-        function loadAdmin() {
-            db.ref('videos').once('value', s => {
-                const g = document.getElementById('admin-grid'); g.innerHTML = '';
-                const v = s.val(); if(v) Object.keys(v).forEach(id => {
-                    g.innerHTML += `<div class="relative aspect-[9/16] rounded-xl overflow-hidden bg-white/5"><video src="${v[id].url}" class="w-full h-full object-cover"></video><div class="absolute inset-0 flex items-center justify-center bg-red-600/40" onclick="deleteV('${id}')"><i class="fas fa-trash"></i></div></div>`;
-                });
-            });
-        }
-        function deleteV(id) { if(confirm('Delete?')) { db.ref(`videos/${id}`).remove(); loadAdmin(); } }
 
         function toggleMute(btn) {
             const v = btn.closest('section').querySelector('video');
@@ -217,11 +194,8 @@
             const obs = new IntersectionObserver((es) => {
                 es.forEach(e => {
                     const v = e.target.querySelector('video');
-                    if(e.isIntersecting && v) {
-                        v.play().catch(()=>{});
-                        const colors = ['#00fff2', '#ff00ff', '#00ffaa', '#ffff00'];
-                        document.documentElement.style.setProperty('--ion', colors[Math.floor(Math.random()*colors.length)]);
-                    } else if(v) { v.pause(); v.currentTime = 0; }
+                    if(e.isIntersecting && v) v.play().catch(()=>{});
+                    else if(v) { v.pause(); v.currentTime = 0; }
                 });
             }, { threshold: 0.6 });
             document.querySelectorAll('.unit').forEach(s => obs.observe(s));
