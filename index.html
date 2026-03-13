@@ -3,203 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VORTEX | APEX</title>
+    <title>VORTEX | QUANTUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Cairo:wght@300;600;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Cairo:wght@300;700&display=swap');
         
-        :root { 
-            --apex-glow: #00fff2; 
-            --apex-accent: #7d00ff;
-            --glass-bg: rgba(10, 10, 10, 0.6);
-        }
-
-        body, html { margin: 0; padding: 0; height: 100%; background: #050505; color: #fff; overflow: hidden; font-family: 'Cairo', sans-serif; }
+        :root { --ion-color: #00f3ff; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; overflow: hidden; font-family: 'Cairo', sans-serif; transition: 0.5s; }
         
-        /* تأثيرات المحرك الخلفي */
-        .scroll-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; perspective: 1000px; }
-        .scroll-engine::-webkit-scrollbar { display: none; }
+        .quantum-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
+        .quantum-engine::-webkit-scrollbar { display: none; }
         
-        .video-segment { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
-        video { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: 0.5s; }
+        .video-segment { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* التصميم الأيوني الزجاجي */
-        .apex-ui { background: var(--glass-bg); backdrop-filter: blur(30px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .apex-text { font-family: 'Syncopate', sans-serif; background: linear-gradient(to right, #00fff2, #7d00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(0,255,242,0.4)); }
+        /* العلامة المائية */
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-family: 'Orbitron'; font-size: 3rem; font-weight: 900; opacity: 0.1; pointer-events: none; white-space: nowrap; z-index: 10; color: #fff; }
 
-        /* زر الرفع الفخم */
-        .pulse-upload {
-            position: fixed; bottom: 100px; right: 25px; width: 70px; height: 70px;
-            background: linear-gradient(135deg, #00fff2, #7d00ff);
-            border-radius: 24px; display: flex; align-items: center; justify-content: center;
-            z-index: 1000; box-shadow: 0 10px 30px rgba(0, 255, 242, 0.3);
-            animation: pulse-glow 2s infinite; cursor: pointer;
-        }
-        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 242, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(0, 255, 242, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 242, 0); } }
+        /* الزجاج الفخم */
+        .glass-ui { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-glow { color: var(--ion-color); text-shadow: 0 0 15px var(--ion-color); }
 
-        /* شريط الـ XP الأيوني */
-        .xp-line { position: fixed; top: 68px; left: 0; height: 1.5px; background: linear-gradient(to right, transparent, var(--apex-glow), transparent); transition: 1s; z-index: 250; }
+        /* التوزيع الجانبي الاحترافي */
+        .action-column { position: absolute; right: 20px; bottom: 160px; display: flex; flex-direction: column; gap: 20px; z-index: 100; }
+        .action-btn { width: 52px; height: 52px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); transition: 0.3s; }
+        .action-btn:active { transform: scale(0.9); border-color: var(--ion-color); }
 
-        .side-action { width: 55px; height: 55px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; transition: 0.3s; }
-        .side-action:active { transform: scale(0.85); background: rgba(0, 255, 242, 0.1); }
+        /* شريط التحكم السفلي الثلاثي */
+        .trinity-hub { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; height: 80px; border-radius: 28px; display: flex; justify-content: space-around; align-items: center; z-index: 500; }
+        .upload-diamond { width: 65px; height: 65px; background: var(--ion-color); color: #000; border-radius: 20px; display: flex; align-items: center; justify-content: center; transform: translateY(-15px) rotate(45deg); box-shadow: 0 10px 25px rgba(0, 243, 255, 0.4); }
+        .upload-diamond i { transform: rotate(-45deg); font-size: 22px; }
+
+        #admin-gate { position: fixed; inset: 0; z-index: 2000; background: #000; display: none; padding: 25px; }
     </style>
 </head>
 <body>
 
-    <header class="fixed top-0 w-full z-[300] apex-ui p-4 flex justify-between items-center border-b border-white/5">
+    <header class="fixed top-0 w-full z-[400] glass-ui p-4 flex justify-between items-center border-b border-white/5">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full border border-emerald-500/30 flex items-center justify-center bg-black">
-                <i class="fas fa-microchip text-[10px] text-emerald-400"></i>
-            </div>
-            <div class="flex flex-col">
-                <span id="level-tag" class="text-[8px] font-bold tracking-[2px] opacity-60">SYSTEM_ONLINE</span>
-                <span class="text-[10px] font-black text-emerald-400">APEX v2.0</span>
-            </div>
+            <h1 class="text-xl font-black neon-glow" style="font-family:'Orbitron'">VORTEX</h1>
+            <div id="digital-clock" class="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[11px] font-mono text-white/70">00:00:00</div>
         </div>
-        <h1 class="text-xl font-bold apex-text tracking-widest cursor-pointer" onclick="triggerAdmin()">APEX</h1>
-        <div class="w-10 h-10 flex items-center justify-center opacity-40"><i class="fas fa-wifi text-xs"></i></div>
+        <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span class="text-[9px] uppercase tracking-widest opacity-50">Live_Protocol</span>
+        </div>
     </header>
 
-    <div id="xp-bar" class="xp-line" style="width: 0%;"></div>
-
-    <div id="upload-trigger" class="pulse-upload">
-        <i class="fa-solid fa-plus text-2xl text-black"></i>
-    </div>
-
-    <main class="scroll-engine" id="video-stack">
-        <div class="h-full flex flex-col items-center justify-center">
-            <div class="w-20 h-20 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
-            <span class="mt-6 text-[10px] tracking-[6px] uppercase opacity-40 animate-pulse">Initializing_Apex_Stream</span>
+    <main class="quantum-engine" id="main-stack">
+        <div class="h-full flex items-center justify-center">
+            <div class="w-12 h-12 border-4 border-white/10 border-t-cyan-500 rounded-full animate-spin"></div>
         </div>
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[450px] h-20 apex-ui rounded-[35px] flex justify-around items-center z-[300] border border-white/10">
-        <i class="fa-solid fa-house-chimney-window text-xl text-emerald-400"></i>
-        <i class="fa-solid fa-message opacity-30" onclick="toggleChat()"></i>
-        <div class="absolute -top-1 w-12 h-1 bg-emerald-500 shadow-[0_0_10px_#00fff2] rounded-full"></div>
-        <i class="fa-solid fa-paper-plane opacity-30" onclick="shareVideo()"></i>
-        <i class="fa-solid fa-crown opacity-30" onclick="openAd()"></i>
+    <nav class="trinity-hub glass-ui">
+        <div class="flex flex-col items-center opacity-40 hover:opacity-100 transition-all" onclick="accessAdmin()">
+            <i class="fas fa-shield-halved text-lg"></i>
+            <span class="text-[9px] font-bold mt-1">ADMIN</span>
+        </div>
+
+        <div class="upload-diamond" id="btn-upload">
+            <i class="fas fa-plus"></i>
+        </div>
+
+        <div class="flex flex-col items-center opacity-40 hover:opacity-100 transition-all" onclick="openChat()">
+            <i class="fas fa-comment-dots text-lg"></i>
+            <span class="text-[9px] font-bold mt-1">CHAT</span>
+        </div>
     </nav>
 
-    <div id="admin-terminal" class="fixed inset-0 z-[1000] hidden bg-black/98 backdrop-blur-3xl p-6">
-        <div class="flex justify-between items-center border-b border-white/10 pb-4">
-            <span class="apex-text font-bold">TERMINAL_v2.0</span>
-            <button onclick="closeAdmin()" class="bg-white/5 px-4 py-2 rounded-xl text-xs">EXIT</button>
+    <div id="admin-gate">
+        <div class="flex justify-between items-center mb-8">
+            <span class="neon-glow font-bold">SYSTEM_MANAGER</span>
+            <i class="fas fa-xmark text-2xl" onclick="closeAdmin()"></i>
         </div>
-        <div id="admin-grid" class="grid grid-cols-2 gap-4 mt-6 h-[80vh] overflow-y-auto"></div>
+        <div id="admin-grid" class="grid grid-cols-2 gap-4 overflow-y-auto h-[80vh]"></div>
     </div>
 
     <script>
-        const SHADOW_ID = localStorage.getItem('apex_uid') || 'CORE_' + Math.random().toString(36).substr(2, 4).toUpperCase();
-        localStorage.setItem('apex_uid', SHADOW_ID);
+        const MY_ID = localStorage.getItem('v_uid') || 'U_' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        localStorage.setItem('v_uid', MY_ID);
 
         const firebaseConfig = { databaseURL: "https://project-717e4-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Admin Protocol
-        function triggerAdmin() {
-            const code = prompt("IDENTITY VERIFICATION:");
-            if(code === "1234") {
-                document.getElementById('admin-terminal').classList.remove('hidden');
-                refreshAdmin();
+        // 1. Digital Clock Logic
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('digital-clock').innerText = now.toLocaleTimeString('en-GB');
+        }
+        setInterval(updateClock, 1000);
+
+        // 2. Admin System
+        function accessAdmin() {
+            if(prompt("PASSWORD:") === "1234") {
+                document.getElementById('admin-gate').style.display = 'block';
+                loadAdminPanel();
             }
         }
-        function closeAdmin() { document.getElementById('admin-terminal').classList.add('hidden'); }
-
-        function refreshAdmin() {
+        function closeAdmin() { document.getElementById('admin-gate').style.display = 'none'; }
+        
+        function loadAdminPanel() {
             db.ref('videos').once('value', s => {
-                const grid = document.getElementById('admin-grid');
-                grid.innerHTML = '';
-                const vids = s.val();
-                if(vids) {
-                    Object.keys(vids).forEach(id => {
-                        const div = document.createElement('div');
-                        div.className = 'relative aspect-[9/16] rounded-2xl overflow-hidden border border-white/5';
-                        div.innerHTML = `
-                            <video src="${vids[id].url}" class="w-full h-full object-cover"></video>
-                            <div class="absolute inset-0 bg-red-600/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer" onclick="deleteEntry('${id}')">
-                                <i class="fas fa-trash text-2xl"></i>
-                            </div>
-                        `;
-                        grid.appendChild(div);
-                    });
-                }
+                const grid = document.getElementById('admin-grid'); grid.innerHTML = '';
+                const vids = s.val(); if(vids) Object.keys(vids).forEach(id => {
+                    const box = document.createElement('div'); box.className = 'relative aspect-[9/16] rounded-xl overflow-hidden border border-white/10';
+                    box.innerHTML = `<video src="${vids[id].url}" class="w-full h-full object-cover"></video>
+                                     <button onclick="burnVid('${id}')" class="absolute inset-0 bg-red-600/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"><i class="fas fa-trash"></i></button>`;
+                    grid.appendChild(box);
+                });
             });
         }
+        function burnVid(id) { if(confirm('Delete?')) { db.ref(`videos/${id}`).remove(); loadAdminPanel(); } }
 
-        function deleteEntry(id) { if(confirm('SURE?')) { db.ref(`videos/${id}`).remove(); refreshAdmin(); } }
-
-        // Cloudinary Elite Upload
-        const CLOUD_NAME = "dssk5tabb", UPLOAD_PRESET = "bjebvo5p";
+        // 3. Cloudinary Upload
         const widget = cloudinary.createUploadWidget({ 
-            cloudName: CLOUD_NAME, 
-            uploadPreset: UPLOAD_PRESET,
-            sources: ['local', 'camera'],
-            clientAllowedFormats: ["video"],
-            styles: { palette: { window: "#050505", sourceBg: "#050505", windowBorder: "#00fff2", link: "#00fff2", action: "#7d00ff", inactiveTabIcon: "#ffffff", textDark: "#000000", textLight: "#ffffff", theme: "black" } }
+            cloudName: "dssk5tabb", uploadPreset: "bjebvo5p", sources: ['local', 'camera'] 
         }, (err, res) => {
             if (!err && res.event === "success") {
-                db.ref('videos/').push({ url: res.info.secure_url, sender: SHADOW_ID, likes: 0, timestamp: Date.now() });
-                document.getElementById('xp-bar').style.width = "100%";
-                setTimeout(() => document.getElementById('xp-bar').style.width = "10%", 2000);
+                db.ref('videos/').push({ url: res.info.secure_url, user: MY_ID, likes: 0, timestamp: Date.now() });
             }
         });
-        document.getElementById("upload-trigger").onclick = () => { widget.open(); };
+        document.getElementById("btn-upload").onclick = () => widget.open();
 
-        // Data Engine
+        // 4. Content Engine
         db.ref('videos').on('value', (snapshot) => {
-            const container = document.getElementById('video-stack');
-            const data = snapshot.val();
-            if(!data) return;
-            
+            const stack = document.getElementById('main-stack');
+            const data = snapshot.val(); if(!data) return;
             const items = Object.keys(data).map(id => ({ id, ...data[id] })).reverse();
-            container.innerHTML = '';
+            stack.innerHTML = '';
             
             items.forEach((v) => {
-                const section = document.createElement('section');
-                section.className = 'video-segment';
-                section.innerHTML = `
+                const sec = document.createElement('section');
+                sec.className = 'video-segment';
+                sec.innerHTML = `
+                    <div class="watermark">VORTEX ELITE</div>
                     <video loop playsinline src="${v.url}"></video>
-                    <div class="absolute left-6 bottom-32 flex flex-col z-[100]">
-                        <div class="side-action apex-ui" onclick="toggleLike('${v.id}')">
-                            <i class="fa-solid fa-heart text-lg ${v.likedBy && v.likedBy[SHADOW_ID] ? 'text-red-500' : 'text-white/40'}"></i>
-                            <span class="text-[9px] mt-1 font-bold">${v.likes || 0}</span>
+                    
+                    <div class="action-column">
+                        <div class="action-btn" onclick="toggleVolume(this)">
+                            <i class="fas fa-volume-high text-white/50"></i>
                         </div>
-                        <div class="side-action apex-ui" onclick="toggleChat()">
-                            <i class="fa-solid fa-comment-dots text-white/40 text-lg"></i>
+                        <div class="flex flex-col items-center gap-1" onclick="handleLike('${v.id}')">
+                            <div class="action-btn">
+                                <i class="fas fa-heart ${v.likedBy && v.likedBy[MY_ID] ? 'text-red-500' : 'text-white/50'}"></i>
+                            </div>
+                            <span class="text-[10px] font-bold">${v.likes || 0}</span>
                         </div>
-                        <div class="side-action apex-ui" onclick="shareVideo()">
-                            <i class="fa-solid fa-share-nodes text-white/40 text-lg"></i>
+                        <div class="action-btn" onclick="doShare()">
+                            <i class="fas fa-share-nodes text-white/50"></i>
                         </div>
-                    </div>
-                    <div class="absolute right-6 bottom-36 opacity-20 pointer-events-none">
-                        <span class="text-[9px] font-bold tracking-[8px] uppercase rotate-90 block" style="writing-mode: vertical-rl;">SYSTEM_STREAM</span>
                     </div>
                 `;
-                container.appendChild(section);
+                stack.appendChild(sec);
             });
-            initScroll();
+            initAutoPlay();
         });
 
-        function initScroll() {
+        function toggleVolume(btn) {
+            const v = btn.closest('section').querySelector('video');
+            v.muted = !v.muted;
+            btn.querySelector('i').className = v.muted ? 'fas fa-volume-xmark text-red-400' : 'fas fa-volume-high text-cyan-400';
+        }
+
+        function initAutoPlay() {
+            const colors = ['#00f3ff', '#ff0055', '#00ffaa', '#7d00ff', '#ffff00'];
             const obs = new IntersectionObserver((entries) => {
                 entries.forEach(e => {
-                    const v = e.target.querySelector('video');
-                    if(e.isIntersecting) { if(v) v.play().catch(()=>{}); }
-                    else { if(v) { v.pause(); v.currentTime = 0; } }
+                    const vid = e.target.querySelector('video');
+                    if(e.isIntersecting) {
+                        if(vid) vid.play().catch(()=>{});
+                        // Change Ionic Color on Scroll
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        document.documentElement.style.setProperty('--ion-color', randomColor);
+                    } else { if(vid) { vid.pause(); vid.currentTime = 0; } }
                 });
-            }, { threshold: 0.7 });
+            }, { threshold: 0.6 });
             document.querySelectorAll('.video-segment').forEach(s => obs.observe(s));
         }
 
         document.addEventListener('click', () => { document.querySelectorAll('video').forEach(v => v.muted = false); }, { once: true });
-        function shareVideo() { navigator.share({ title: 'APEX ELITE', url: window.location.href }); }
-        function openAd() { window.open("https://www.effectivegatecpm.com/w6ejwgptb?key=b77b52a8f4f7e4cdd1ac7bccc1b04a4d", "_blank"); }
+        function doShare() { navigator.share({ title: 'VORTEX QUANTUM', url: window.location.href }); }
+        function openChat() { alert("Chat system connecting..."); }
     </script>
 </body>
 </html>
