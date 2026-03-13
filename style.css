@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Cairo:wght@400;700&display=swap');
+
+:root { 
+    --neon: #00f3ff; 
+    --accent: #ff007f;
+    --bg: #020205; 
+    --glass: rgba(255, 255, 255, 0.03);
+}
+
+/* حماية ومنع سحب */
+* { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; outline: none; }
+
+body { 
+    margin: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif;
+    background-image: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #020205 100%);
+}
+
+.scroll-engine { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
+.scroll-engine::-webkit-scrollbar { display: none; }
+
+.video-segment { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; }
+video { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+/* أزرار أيونية متوهجة */
+.nav-btn { 
+    width: 65px; height: 65px; border-radius: 22px; background: var(--glass); 
+    backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; transition: 0.4s;
+}
+
+.shadow-neon:hover { box-shadow: 0 0 20px var(--neon); color: var(--neon); }
+.shadow-accent { background: var(--accent) !important; box-shadow: 0 0 20px var(--accent); }
+
+.loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.neon-text { text-shadow: 0 0 10px var(--neon); color: var(--neon); }
